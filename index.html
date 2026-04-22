@@ -1,41 +1,248 @@
 <!doctype html>
 <html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gouthami.co</title>
-  <style>
-    body { font-family: Arial; background:#f5f5f5; display:flex; justify-content:center; align-items:center; height:100vh; }
-    .box { background:white; padding:20px; border-radius:15px; width:320px; box-shadow:0 0 10px rgba(0,0,0,0.1);}
-    input, textarea { width:100%; margin:6px 0; padding:10px; border:1px solid #ddd; border-radius:8px;}
-    button { width:100%; padding:10px; background:black; color:white; border:none; border-radius:8px; }
-    h2 { text-align:center; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gouthami.co</title>
+
+<style>
+body{
+  margin:0;
+  font-family:'Segoe UI', sans-serif;
+  background:#fff;
+  color:#222;
+}
+
+header{
+  text-align:center;
+  padding:20px;
+  font-weight:600;
+  letter-spacing:2px;
+  border-bottom:1px solid #eee;
+}
+
+.banner{
+  width:100%;
+  height:180px;
+  background:url('https://via.placeholder.com/1200x400') center/cover;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:white;
+  font-size:22px;
+  font-weight:bold;
+}
+
+.controls{
+  padding:15px;
+  display:flex;
+  gap:10px;
+}
+
+input, select{
+  padding:8px;
+  border-radius:8px;
+  border:1px solid #ddd;
+  width:100%;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:20px;
+  padding:20px;
+}
+
+.product{
+  background:#fff;
+  border-radius:20px;
+  overflow:hidden;
+  box-shadow:0 8px 20px rgba(0,0,0,0.05);
+  transition:0.3s;
+}
+
+.product:hover{
+  transform:translateY(-5px);
+}
+
+.product img{
+  width:100%;
+  height:220px;
+  object-fit:cover;
+}
+
+.product-info{
+  padding:15px;
+}
+
+.price{
+  font-weight:600;
+  margin:5px 0;
+}
+
+button{
+  width:100%;
+  padding:8px;
+  border:none;
+  border-radius:10px;
+  background:black;
+  color:white;
+  margin-top:5px;
+  cursor:pointer;
+}
+
+.wishlist{
+  background:#ff4081;
+}
+
+.cart-bar{
+  position:fixed;
+  bottom:0;
+  width:100%;
+  background:#fff;
+  padding:15px;
+  box-shadow:0 -5px 15px rgba(0,0,0,0.1);
+}
+
+.checkout-btn{
+  background:#e91e63;
+}
+</style>
 </head>
+
 <body>
-  <div class="box">
-    <h2>Gouthami.co</h2>
-    <input id="name" placeholder="Name">
-    <input id="phone" placeholder="Phone">
-    <textarea id="address" placeholder="Address"></textarea>
-    <input id="product" placeholder="Product">
-    <textarea id="notes" placeholder="Notes"></textarea>
-    <button onclick="send()">Send on Instagram</button>
-  </div>
+
+<header>GOUTHAMI.CO</header>
+
+<div class="banner">New Collection ✨</div>
+
+<div class="controls">
+<input type="text" id="search" placeholder="Search products..." onkeyup="filterProducts()">
+<select id="category" onchange="filterProducts()">
+<option value="all">All Categories</option>
+<option value="fashion">Fashion</option>
+<option value="accessories">Accessories</option>
+</select>
+</div>
+
+<div class="grid" id="productGrid"></div>
+
+<div class="cart-bar">
+<button class="checkout-btn" onclick="checkout()">Checkout</button>
+</div>
 
 <script>
-function send(){
-  let name=document.getElementById('name').value;
-  let phone=document.getElementById('phone').value;
-  let address=document.getElementById('address').value;
-  let product=document.getElementById('product').value;
-  let notes=document.getElementById('notes').value;
 
-  let msg = `New Order:%0AName:${name}%0APhone:${phone}%0AAddress:${address}%0AProduct:${product}%0ANotes:${notes}`;
+let products = [
+{name:"Elegant Handbag", price:499, category:"fashion"},
+{name:"Stylish Kurti", price:699, category:"fashion"},
+{name:"Trendy Earrings", price:299, category:"accessories"},
+{name:"Classic Watch", price:999, category:"accessories"}
+];
 
-  let ig = "https://ig.me/m/gouthami.co?text=" + msg;
-  window.open(ig,"_blank");
+let cart = [];
+let wishlist = [];
+
+function renderProducts(){
+let grid = document.getElementById("productGrid");
+grid.innerHTML = "";
+
+products.forEach(p=>{
+grid.innerHTML += `
+<div class="product">
+<img src="https://via.placeholder.com/400x500">
+<div class="product-info">
+<h4>${p.name}</h4>
+<div class="price">₹${p.price}</div>
+<button onclick="addToCart('${p.name}',${p.price})">Add to Cart</button>
+<button class="wishlist" onclick="addToWishlist('${p.name}')">❤️ Wishlist</button>
+</div>
+</div>
+`;
+});
 }
+
+function addToCart(name, price){
+cart.push({name, price});
+alert(name+" added to cart");
+}
+
+function addToWishlist(name){
+wishlist.push(name);
+alert(name+" added to wishlist");
+}
+
+function filterProducts(){
+let search = document.getElementById("search").value.toLowerCase();
+let category = document.getElementById("category").value;
+
+let filtered = products.filter(p=>{
+return (category=="all" || p.category==category) &&
+p.name.toLowerCase().includes(search);
+});
+
+let grid = document.getElementById("productGrid");
+grid.innerHTML = "";
+
+filtered.forEach(p=>{
+grid.innerHTML += `
+<div class="product">
+<img src="https://via.placeholder.com/400x500">
+<div class="product-info">
+<h4>${p.name}</h4>
+<div class="price">₹${p.price}</div>
+<button onclick="addToCart('${p.name}',${p.price})">Add to Cart</button>
+<button class="wishlist" onclick="addToWishlist('${p.name}')">❤️ Wishlist</button>
+</div>
+</div>
+`;
+});
+}
+
+function checkout(){
+
+if(cart.length===0){
+alert("Cart is empty");
+return;
+}
+
+let name = prompt("Enter your Name:");
+let phone = prompt("Enter your Phone:");
+let address = prompt("Enter your Address:");
+
+if(!name || !phone || !address){
+alert("All details required");
+return;
+}
+
+let total=0;
+let message="Order Details:%0A";
+
+cart.forEach((item,i)=>{
+message += (i+1)+". "+item.name+" - ₹"+item.price+"%0A";
+total+=item.price;
+});
+
+message+="%0ATotal: ₹"+total+
+"%0AName: "+name+
+"%0APhone: "+phone+
+"%0AAddress: "+address;
+
+let choice = confirm("Total ₹"+total+"\n\nOK = Pay via UPI\nCancel = Instagram");
+
+if(choice){
+let upi="upi://pay?pa=YOURUPI@okaxis&pn=Gouthami&am="+total+"&cu=INR";
+window.location.href=upi;
+}else{
+let ig="https://ig.me/m/gouthami.co8431600813@ybl?text="+message;
+window.open(ig,"_blank");
+}
+
+}
+
+renderProducts();
+
 </script>
+
 </body>
 </html>
