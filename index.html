@@ -8,12 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
 <style>
-body{
-margin:0;
-font-family:'Poppins',sans-serif;
-background:#fafafa;
-color:#222;
-}
+body{margin:0;font-family:'Poppins',sans-serif;background:#fafafa;color:#222;}
 
 header{
 padding:25px;
@@ -26,7 +21,7 @@ box-shadow:0 2px 10px rgba(0,0,0,0.05);
 }
 
 .hero{
-height:260px;
+height:240px;
 background:linear-gradient(rgba(0,0,0,0.4),rgba(0,0,0,0.4)),
 url('https://images.unsplash.com/photo-1490481651871-ab68de25d43d');
 background-size:cover;
@@ -37,7 +32,6 @@ justify-content:center;
 color:white;
 font-size:26px;
 font-weight:600;
-letter-spacing:2px;
 }
 
 .categories{
@@ -59,52 +53,89 @@ white-space:nowrap;
 }
 
 .categories button.active{
-background:black;
-color:white;
+background:black;color:white;
 }
 
 .grid{
 display:grid;
 grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
 gap:25px;
-padding:30px;
+padding:25px;
 }
 
 .card{
 background:white;
 border-radius:20px;
 overflow:hidden;
-box-shadow:0 10px 30px rgba(0,0,0,0.06);
-transition:0.3s ease;
-}
-
-.card:hover{
-transform:translateY(-8px);
+box-shadow:0 10px 25px rgba(0,0,0,0.06);
+position:relative;
 }
 
 .card img{
 width:100%;
-height:240px;
+height:220px;
 object-fit:cover;
 }
 
-.info{
-padding:18px;
-}
+.info{padding:15px;}
 
-.price{
-font-weight:600;
-margin:8px 0;
-}
+.price{font-weight:600;margin:5px 0;}
 
 button.add{
 width:100%;
 padding:8px;
 border:none;
-border-radius:30px;
+border-radius:25px;
 background:black;
 color:white;
 cursor:pointer;
+margin-top:5px;
+}
+
+.heart{
+position:absolute;
+top:10px;
+right:12px;
+font-size:20px;
+cursor:pointer;
+}
+
+.heart.active{
+color:red;
+}
+
+.top-actions{
+display:flex;
+justify-content:space-between;
+padding:10px 20px;
+background:white;
+}
+
+.top-actions button{
+border:none;
+background:#c2185b;
+color:white;
+padding:6px 14px;
+border-radius:20px;
+cursor:pointer;
+}
+
+.modal{
+display:none;
+position:fixed;
+top:0;left:0;
+width:100%;height:100%;
+background:rgba(0,0,0,0.6);
+justify-content:center;
+align-items:center;
+}
+
+.modal-content{
+background:white;
+padding:20px;
+border-radius:15px;
+width:90%;
+max-width:400px;
 }
 
 .checkout-bar{
@@ -113,17 +144,16 @@ bottom:0;
 width:100%;
 background:white;
 padding:15px;
-box-shadow:0 -5px 20px rgba(0,0,0,0.1);
+box-shadow:0 -5px 15px rgba(0,0,0,0.1);
 }
 
 .checkout-btn{
 background:#c2185b;
-color:white;
 border:none;
+color:white;
 padding:12px;
 width:100%;
-border-radius:30px;
-font-size:16px;
+border-radius:25px;
 cursor:pointer;
 }
 </style>
@@ -133,8 +163,11 @@ cursor:pointer;
 
 <header>GOUTHAMI.CO</header>
 
-<div class="hero">
-Premium Fashion Collection ✨
+<div class="hero">Premium Fashion ✨</div>
+
+<div class="top-actions">
+<button onclick="openWishlist()">View Wishlist ❤️</button>
+<span id="cartCount">Cart: 0</span>
 </div>
 
 <div class="categories">
@@ -151,20 +184,25 @@ Premium Fashion Collection ✨
 <button class="checkout-btn" onclick="checkout()">Secure Checkout</button>
 </div>
 
+<div class="modal" id="wishlistModal">
+<div class="modal-content">
+<h3>Your Wishlist ❤️</h3>
+<div id="wishlistItems"></div>
+<button onclick="closeWishlist()">Close</button>
+</div>
+</div>
+
 <script>
 
 let products=[
-{name:"Skinny Blue Jeans",price:1199,category:"jeans",img:"https://images.unsplash.com/photo-1541099649105-f69ad21f3246"},
-{name:"Ripped Denim Jeans",price:1399,category:"jeans",img:"https://images.unsplash.com/photo-1475178626620-a4d074967452"},
+{name:"Skinny Jeans",price:1199,category:"jeans",img:"https://images.unsplash.com/photo-1541099649105-f69ad21f3246"},
 {name:"Western Top",price:899,category:"western",img:"https://images.unsplash.com/photo-1520975916090-3105956dac38"},
-{name:"Party Dress",price:1999,category:"western",img:"https://images.unsplash.com/photo-1503342217505-b0a15ec3261c"},
 {name:"Silk Saree",price:2499,category:"traditional",img:"https://images.unsplash.com/photo-1583391733956-6c78276477e4"},
-{name:"Anarkali Dress",price:1799,category:"traditional",img:"https://images.unsplash.com/photo-1593030761757-71fae45fa0e7"},
-{name:"Designer Earrings",price:499,category:"accessories",img:"https://images.unsplash.com/photo-1588444650700-6a6c6cdd0b6e"},
-{name:"Luxury Handbag",price:1499,category:"accessories",img:"https://images.unsplash.com/photo-1584917865442-de89df76afd3"}
+{name:"Designer Earrings",price:499,category:"accessories",img:"https://images.unsplash.com/photo-1588444650700-6a6c6cdd0b6e"}
 ];
 
 let cart=[];
+let wishlist=[];
 let currentCategory="all";
 
 function render(){
@@ -173,8 +211,10 @@ container.innerHTML="";
 let filtered=products.filter(p=>currentCategory==="all"||p.category===currentCategory);
 
 filtered.forEach(p=>{
+let isWish=wishlist.includes(p.name);
 container.innerHTML+=`
 <div class="card">
+<div class="heart ${isWish?'active':''}" onclick="toggleWishlist('${p.name}')">❤️</div>
 <img src="${p.img}">
 <div class="info">
 <h4>${p.name}</h4>
@@ -194,12 +234,39 @@ render();
 
 function addToCart(name,price){
 cart.push({name,price});
+document.getElementById("cartCount").innerText="Cart: "+cart.length;
 alert("Added to cart");
+}
+
+function toggleWishlist(name){
+if(wishlist.includes(name)){
+wishlist=wishlist.filter(i=>i!==name);
+}else{
+wishlist.push(name);
+}
+render();
+}
+
+function openWishlist(){
+let list=document.getElementById("wishlistItems");
+list.innerHTML="";
+if(wishlist.length===0){
+list.innerHTML="No items in wishlist.";
+}else{
+wishlist.forEach(item=>{
+list.innerHTML+="<p>"+item+"</p>";
+});
+}
+document.getElementById("wishlistModal").style.display="flex";
+}
+
+function closeWishlist(){
+document.getElementById("wishlistModal").style.display="none";
 }
 
 function checkout(){
 if(cart.length===0){
-alert("Cart is empty");
+alert("Cart empty");
 return;
 }
 let total=0;
