@@ -5,107 +5,126 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Gouthami.co</title>
 
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
 <style>
 body{
-  margin:0;
-  font-family:'Segoe UI', sans-serif;
-  background:#fff;
-  color:#222;
+margin:0;
+font-family:'Poppins',sans-serif;
+background:#fafafa;
+color:#222;
 }
 
 header{
-  text-align:center;
-  padding:20px;
-  font-weight:600;
-  letter-spacing:2px;
-  border-bottom:1px solid #eee;
+padding:25px;
+text-align:center;
+font-weight:600;
+letter-spacing:4px;
+font-size:22px;
+background:white;
+box-shadow:0 2px 10px rgba(0,0,0,0.05);
 }
 
-.banner{
-  width:100%;
-  height:180px;
-  background:url('https://via.placeholder.com/1200x400') center/cover;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  color:white;
-  font-size:22px;
-  font-weight:bold;
+.hero{
+height:260px;
+background:linear-gradient(rgba(0,0,0,0.4),rgba(0,0,0,0.4)),
+url('https://images.unsplash.com/photo-1490481651871-ab68de25d43d');
+background-size:cover;
+background-position:center;
+display:flex;
+align-items:center;
+justify-content:center;
+color:white;
+font-size:26px;
+font-weight:600;
+letter-spacing:2px;
 }
 
-.controls{
-  padding:15px;
-  display:flex;
-  gap:10px;
+.categories{
+display:flex;
+gap:10px;
+overflow:auto;
+padding:15px;
+background:white;
 }
 
-input, select{
-  padding:8px;
-  border-radius:8px;
-  border:1px solid #ddd;
-  width:100%;
+.categories button{
+background:#eee;
+border:none;
+padding:8px 18px;
+border-radius:30px;
+cursor:pointer;
+font-size:14px;
+white-space:nowrap;
+}
+
+.categories button.active{
+background:black;
+color:white;
 }
 
 .grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:20px;
-  padding:20px;
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+gap:25px;
+padding:30px;
 }
 
-.product{
-  background:#fff;
-  border-radius:20px;
-  overflow:hidden;
-  box-shadow:0 8px 20px rgba(0,0,0,0.05);
-  transition:0.3s;
+.card{
+background:white;
+border-radius:20px;
+overflow:hidden;
+box-shadow:0 10px 30px rgba(0,0,0,0.06);
+transition:0.3s ease;
 }
 
-.product:hover{
-  transform:translateY(-5px);
+.card:hover{
+transform:translateY(-8px);
 }
 
-.product img{
-  width:100%;
-  height:220px;
-  object-fit:cover;
+.card img{
+width:100%;
+height:240px;
+object-fit:cover;
 }
 
-.product-info{
-  padding:15px;
+.info{
+padding:18px;
 }
 
 .price{
-  font-weight:600;
-  margin:5px 0;
+font-weight:600;
+margin:8px 0;
 }
 
-button{
-  width:100%;
-  padding:8px;
-  border:none;
-  border-radius:10px;
-  background:black;
-  color:white;
-  margin-top:5px;
-  cursor:pointer;
+button.add{
+width:100%;
+padding:8px;
+border:none;
+border-radius:30px;
+background:black;
+color:white;
+cursor:pointer;
 }
 
-.wishlist{
-  background:#ff4081;
-}
-
-.cart-bar{
-  position:fixed;
-  bottom:0;
-  width:100%;
-  background:#fff;
-  padding:15px;
-  box-shadow:0 -5px 15px rgba(0,0,0,0.1);
+.checkout-bar{
+position:fixed;
+bottom:0;
+width:100%;
+background:white;
+padding:15px;
+box-shadow:0 -5px 20px rgba(0,0,0,0.1);
 }
 
 .checkout-btn{
-  background:#e91e63;
+background:#c2185b;
+color:white;
+border:none;
+padding:12px;
+width:100%;
+border-radius:30px;
+font-size:16px;
+cursor:pointer;
 }
 </style>
 </head>
@@ -114,133 +133,82 @@ button{
 
 <header>GOUTHAMI.CO</header>
 
-<div class="banner">New Collection ✨</div>
-
-<div class="controls">
-<input type="text" id="search" placeholder="Search products..." onkeyup="filterProducts()">
-<select id="category" onchange="filterProducts()">
-<option value="all">All Categories</option>
-<option value="fashion">Fashion</option>
-<option value="accessories">Accessories</option>
-</select>
+<div class="hero">
+Premium Fashion Collection ✨
 </div>
 
-<div class="grid" id="productGrid"></div>
+<div class="categories">
+<button class="active" onclick="filterCategory('all',this)">All</button>
+<button onclick="filterCategory('jeans',this)">Jeans</button>
+<button onclick="filterCategory('western',this)">Western</button>
+<button onclick="filterCategory('traditional',this)">Traditional</button>
+<button onclick="filterCategory('accessories',this)">Accessories</button>
+</div>
 
-<div class="cart-bar">
-<button class="checkout-btn" onclick="checkout()">Checkout</button>
+<div class="grid" id="products"></div>
+
+<div class="checkout-bar">
+<button class="checkout-btn" onclick="checkout()">Secure Checkout</button>
 </div>
 
 <script>
 
-let products = [
-{name:"Elegant Handbag", price:499, category:"fashion"},
-{name:"Stylish Kurti", price:699, category:"fashion"},
-{name:"Trendy Earrings", price:299, category:"accessories"},
-{name:"Classic Watch", price:999, category:"accessories"}
+let products=[
+{name:"Skinny Blue Jeans",price:1199,category:"jeans",img:"https://images.unsplash.com/photo-1541099649105-f69ad21f3246"},
+{name:"Ripped Denim Jeans",price:1399,category:"jeans",img:"https://images.unsplash.com/photo-1475178626620-a4d074967452"},
+{name:"Western Top",price:899,category:"western",img:"https://images.unsplash.com/photo-1520975916090-3105956dac38"},
+{name:"Party Dress",price:1999,category:"western",img:"https://images.unsplash.com/photo-1503342217505-b0a15ec3261c"},
+{name:"Silk Saree",price:2499,category:"traditional",img:"https://images.unsplash.com/photo-1583391733956-6c78276477e4"},
+{name:"Anarkali Dress",price:1799,category:"traditional",img:"https://images.unsplash.com/photo-1593030761757-71fae45fa0e7"},
+{name:"Designer Earrings",price:499,category:"accessories",img:"https://images.unsplash.com/photo-1588444650700-6a6c6cdd0b6e"},
+{name:"Luxury Handbag",price:1499,category:"accessories",img:"https://images.unsplash.com/photo-1584917865442-de89df76afd3"}
 ];
 
-let cart = [];
-let wishlist = [];
+let cart=[];
+let currentCategory="all";
 
-function renderProducts(){
-let grid = document.getElementById("productGrid");
-grid.innerHTML = "";
-
-products.forEach(p=>{
-grid.innerHTML += `
-<div class="product">
-<img src="https://via.placeholder.com/400x500">
-<div class="product-info">
-<h4>${p.name}</h4>
-<div class="price">₹${p.price}</div>
-<button onclick="addToCart('${p.name}',${p.price})">Add to Cart</button>
-<button class="wishlist" onclick="addToWishlist('${p.name}')">❤️ Wishlist</button>
-</div>
-</div>
-`;
-});
-}
-
-function addToCart(name, price){
-cart.push({name, price});
-alert(name+" added to cart");
-}
-
-function addToWishlist(name){
-wishlist.push(name);
-alert(name+" added to wishlist");
-}
-
-function filterProducts(){
-let search = document.getElementById("search").value.toLowerCase();
-let category = document.getElementById("category").value;
-
-let filtered = products.filter(p=>{
-return (category=="all" || p.category==category) &&
-p.name.toLowerCase().includes(search);
-});
-
-let grid = document.getElementById("productGrid");
-grid.innerHTML = "";
+function render(){
+let container=document.getElementById("products");
+container.innerHTML="";
+let filtered=products.filter(p=>currentCategory==="all"||p.category===currentCategory);
 
 filtered.forEach(p=>{
-grid.innerHTML += `
-<div class="product">
-<img src="https://via.placeholder.com/400x500">
-<div class="product-info">
+container.innerHTML+=`
+<div class="card">
+<img src="${p.img}">
+<div class="info">
 <h4>${p.name}</h4>
 <div class="price">₹${p.price}</div>
-<button onclick="addToCart('${p.name}',${p.price})">Add to Cart</button>
-<button class="wishlist" onclick="addToWishlist('${p.name}')">❤️ Wishlist</button>
+<button class="add" onclick="addToCart('${p.name}',${p.price})">Add to Cart</button>
 </div>
-</div>
-`;
+</div>`;
 });
+}
+
+function filterCategory(cat,btn){
+currentCategory=cat;
+document.querySelectorAll(".categories button").forEach(b=>b.classList.remove("active"));
+btn.classList.add("active");
+render();
+}
+
+function addToCart(name,price){
+cart.push({name,price});
+alert("Added to cart");
 }
 
 function checkout(){
-
 if(cart.length===0){
 alert("Cart is empty");
 return;
 }
-
-let name = prompt("Enter your Name:");
-let phone = prompt("Enter your Phone:");
-let address = prompt("Enter your Address:");
-
-if(!name || !phone || !address){
-alert("All details required");
-return;
-}
-
 let total=0;
-let message="Order Details:%0A";
-
-cart.forEach((item,i)=>{
-message += (i+1)+". "+item.name+" - ₹"+item.price+"%0A";
-total+=item.price;
-});
-
-message+="%0ATotal: ₹"+total+
-"%0AName: "+name+
-"%0APhone: "+phone+
-"%0AAddress: "+address;
-
-let choice = confirm("Total ₹"+total+"\n\nOK = Pay via UPI\nCancel = Instagram");
-
-if(choice){
+cart.forEach(i=>total+=i.price);
 let upi="upi://pay?pa=YOURUPI@okaxis&pn=Gouthami&am="+total+"&cu=INR";
 window.location.href=upi;
-}else{
-let ig="https://ig.me/m/gouthami.co8431600813@ybl?text="+message;
-window.open(ig,"_blank");
 }
 
-}
-
-renderProducts();
+render();
 
 </script>
 
