@@ -1,0 +1,41 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gouthami.co</title>
+  <style>
+    body { font-family: Arial; background:#f5f5f5; display:flex; justify-content:center; align-items:center; height:100vh; }
+    .box { background:white; padding:20px; border-radius:15px; width:320px; box-shadow:0 0 10px rgba(0,0,0,0.1);}
+    input, textarea { width:100%; margin:6px 0; padding:10px; border:1px solid #ddd; border-radius:8px;}
+    button { width:100%; padding:10px; background:black; color:white; border:none; border-radius:8px; }
+    h2 { text-align:center; }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h2>Gouthami.co</h2>
+    <input id="name" placeholder="Name">
+    <input id="phone" placeholder="Phone">
+    <textarea id="address" placeholder="Address"></textarea>
+    <input id="product" placeholder="Product">
+    <textarea id="notes" placeholder="Notes"></textarea>
+    <button onclick="send()">Send on Instagram</button>
+  </div>
+
+<script>
+function send(){
+  let name=document.getElementById('name').value;
+  let phone=document.getElementById('phone').value;
+  let address=document.getElementById('address').value;
+  let product=document.getElementById('product').value;
+  let notes=document.getElementById('notes').value;
+
+  let msg = `New Order:%0AName:${name}%0APhone:${phone}%0AAddress:${address}%0AProduct:${product}%0ANotes:${notes}`;
+
+  let ig = "https://ig.me/m/YOUR_INSTAGRAM_USERNAME?text=" + msg;
+  window.open(ig,"_blank");
+}
+</script>
+</body>
+</html>
